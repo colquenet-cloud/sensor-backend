@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Sensor = require('../models/Sensor');
+const auth = require('../middleware/auth');
 
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const data = await Sensor.find().sort({ timestamp: -1 }).limit(1);
     res.json(data[0]);
