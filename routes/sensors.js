@@ -12,6 +12,7 @@ router.get('/', auth, async (req, res) => {
     const data = await Sensor.find().sort({ timestamp: -1 }).limit(1);
     res.json(data[0]);
   } catch (err) {
+    console.error("Error en GET /sensors:", err);
     res.status(500).json({ error: 'Error al obtener datos del sensor' });
   }
 });
@@ -22,22 +23,23 @@ router.get('/', auth, async (req, res) => {
 // -------------------------------------------
 router.post('/', async (req, res) => {
   try {
-    const { temperature, humidity, estado, timestamp } = req.body;
+    const { temperature, humidity, estado } = req.body;
 
+    // Validación simple
     if (
       temperature === undefined ||
       humidity === undefined ||
-      estado === undefined ||
-      !timestamp
+      estado === undefined
     ) {
       return res.status(400).json({ error: "Faltan campos en el JSON recibido" });
     }
 
+    // Crear y guardar
     const newData = new Sensor({
       temperature,
       humidity,
       estado,
-      timestamp
+      timestamp: new Date() // se genera en backend
     });
 
     await newData.save();
