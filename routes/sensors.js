@@ -16,7 +16,15 @@ router.get('/', auth, async (req, res) => {
     res.status(500).json({ error: 'Error al obtener datos del sensor' });
   }
 });
-
+router.get('/history', auth, async (req, res) => {
+  try {
+    const data = await Sensor.find().sort({ _id: -1 }); // ordenado del más nuevo al más antiguo
+    res.json(data);
+  } catch (err) {
+    console.error("Error al obtener historial:", err);
+    res.status(500).json({ error: 'Error al obtener historial del sensor' });
+  }
+});
 // -------------------------------------------
 // POST: ESP32 envía datos al backend
 // (SIN autenticación)
