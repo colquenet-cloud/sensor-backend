@@ -11,7 +11,7 @@ router.post('/register', async (req, res) => {
     const newUser = new User({ email, password: hashed });
     await newUser.save();
 
-    // ✅ AGREGADO: Generar token después del registro
+    // Generar token después del registro
     const token = jwt.sign(
       { id: newUser._id, email: newUser.email },
       process.env.JWT_SECRET,
