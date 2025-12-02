@@ -1,25 +1,50 @@
 const express = require("express");
+const router = express.Router();
 const Pump = require("../models/pump.models");
 
-const router = express.Router();
+// ✅ Obtener estado de la bomba
+router.get("/pump", async (req, res) => {
+  try {
+    let pump = await Pump.findOne();
 
-// ACTUALIZAR ESTADO BOMBA
-router.post("/pump", async (req, res) => {
-  const { state } = req.body;
+    // Si no existe, crear uno por defecto
+    if (!pump) {
+      pump = await Pump.create({
+        name: "Bomba Principal",
+        state: false,
+        updatedAt: new Date()
+      });
+    }
 
-  const pump = await Pump.findOneAndUpdate(
-    {},
-    { state, updatedAt: new Date() },
-    { upsert: true, new: true }
-  );
-
-  res.json(pump);
+    res.json({ state: pump.state });
+  } catch (error) {
+    res.status(500).json({ error: "Error obteniendo estado" });
+  }
 });
 
-// LEER ESTADO BOMBA
-router.get("/pump", async (req, res) => {
-  const pump = await Pump.findOne();
-  res.json(pump || { state: false });
+// ✅ Cambiar estado manualmente
+router.post("/pump", async (req, res) => {
+  try {
+    const { state } = req.body;
+
+    let pump = await Pump.findOne();
+
+    if (!pump) {
+      pump = await Pump.create({
+        name: "Bomba Principal",
+        state: state,
+        updatedAt: new Date()
+      });
+    } else {
+      pump.state = state;
+      pump.updatedAt = new Date();
+      await pump.save();
+    }
+
+    res.json({ ok: true, state });
+  } catch (error) {
+    res.status(500).json({ error: "Error actualizando bomba" });
+  }
 });
 
 module.exports = router;
