@@ -1,19 +1,9 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const pumpSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    default: "main",
-    unique: true
-  },
-  state: {
-    type: Boolean,
-    default: false
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  }
+  name: { type: String, default: "main" },
+  state: { type: Boolean, default: false },
+  updatedAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.model("Pump", pumpSchema);
+module.exports = mongoose.model("Pump", pumpSchema);
